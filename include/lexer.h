@@ -53,9 +53,9 @@ typedef struct Token{
 		int i;		// the value for INT
 		char c;		// the value for CHAR
 		double d;		// the value for DOUBLE
-		};
+	}value;
 	struct Token *next;		// next token in a simple linked list
-	}Token;
+}Token;
 
 Token *tokenize(const char *pch);
 void showTokens(const Token *tokens);

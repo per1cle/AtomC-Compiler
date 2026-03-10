@@ -13,15 +13,16 @@ DEPS = $(OBJS:.o=.d)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	@$(CC) $(FLAGS) -o $@ $(0BJS)
+	@$(CC) $(FLAGS) -o $@ $(OBJS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	@$(CC) $(CFLAGS) -MMD -c $< -o $@
+	@$(CC) $(FLAGS) -MMD -c $< -o $@
 
 $(OBJDIR):
-	@mkdir -p $(OBJDIR)
+	@if not exist $(OBJDIR) mkdir $(OBJDIR)
 
 -include $(DEPS)
 
 clean:
-	@rm -rf $(OBJDIR) $(TARGET)
+	@if exist $(OBJDIR) rmdir /s /q $(OBJDIR)
+	@if exist $(TARGET).exe del /q $(TARGET).exe
