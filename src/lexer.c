@@ -120,7 +120,7 @@ Token *tokenize(const char *pch){
 			case '!':
 				if(pch[1] == '='){
 					addTk(NOTEQ);
-					pch++;
+					pch+=2;
 				}else{
 					addTk(NOT);
 					pch++;
@@ -129,7 +129,7 @@ Token *tokenize(const char *pch){
 			case '<':
 				if(pch[1] == '='){
 					addTk(LESSEQ);
-					pch++;
+					pch+=2;
 				}else{
 					addTk(LESS);
 					pch++;
@@ -138,7 +138,7 @@ Token *tokenize(const char *pch){
 			case '>':
 				if(pch[1] == '='){
 					addTk(GREATEREQ);
-					pch++;
+					pch+=2;
 				}else{
 					addTk(GREATER);
 					pch++;
@@ -242,14 +242,14 @@ Token *tokenize(const char *pch){
 					if(*pch == '.'){
 						isDouble = 1;
 						pch++;
-						if(!isdigit(*pch)) err("Invalid floating point format");
+						if(!isdigit(*pch)) err("Lipsa parte zecimala");
 						while(isdigit(*pch)) pch++;
 					}
 					if(*pch == 'e' || *pch == 'E'){
 						isDouble = 1;
 						pch++;
 						if(*pch == '+' || *pch == '-') pch++;
-						if(!isdigit(*pch)) err("Invalid floating point format");
+						if(!isdigit(*pch)) err("Lipsa parte numerica exponent");
 						while (isdigit(*pch)) pch++;
 					}
 
@@ -271,7 +271,7 @@ void showTokens(const Token *tokens){
 		printf("%d\t%s", tk->line, tokenNames[tk->code]);
         if (tk->code == ID || tk->code == STRING) printf(":%s", tk->value.text);
         else if (tk->code == INT) printf(":%d", tk->value.i);
-        else if (tk->code == DOUBLE) printf(":%g", tk->value.d);
+        else if (tk->code == DOUBLE) printf(":%.2f", tk->value.d);
         else if (tk->code == CHAR) printf(":%c", tk->value.c);
         printf("\n");
 	}

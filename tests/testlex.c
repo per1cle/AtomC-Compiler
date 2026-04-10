@@ -10,6 +10,6 @@ int main()
 		}
 	if(4.9==49e-1&&0.49E1==2.45*2.0)puts("yes");
 	putc('\'');
-	puts("pentru \" se foloseste \\\"");	// pentru \n
+	puts("pentru \n si pentru tab \t testam");	// pentru " se foloseste \"
 	return 0;
 }

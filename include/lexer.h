@@ -45,6 +45,8 @@ typedef enum{
 	GREATEREQ,    // '>='
 	}TokenType;
 
+#define NUM_TOKEN_TYPES 38  // Total number of token types
+
 typedef struct Token{
 	TokenType code;		// ID, TYPE_CHAR, ...
 	int line;		// the line from the input file

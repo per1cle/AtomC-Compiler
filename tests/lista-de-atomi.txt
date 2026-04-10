@@ -61,7 +61,7 @@
 12	SEMICOLON
 13	ID:puts
 13	LPAR
-13	STRING: pentru " se foloseste \"
+13	STRING:pentru " se foloseste \"
 13	RPAR
 13	SEMICOLON
 14	RETURN
