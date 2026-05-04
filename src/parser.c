@@ -79,21 +79,24 @@ bool structDef(){
 
 // varDef: typeBase ID arrayDecl? SEMICOLON 
 bool varDef(){
+    Token *start = iTk;
     if(typeBase()){
         if(consume(ID)){
             if(arrayDecl()){}
             if(consume(SEMICOLON))
                 return true;
             else
-                tkerr("expected ';' after variable definition");
+                tkerr("missing ';' in variable declaration or invalid syntax/missing '(' for function");
         }else
-            tkerr("expected variable name");
+            tkerr("invalid syntax: expected variable/function identifier or missing '{' for struct definition");
     }
+    iTk = start;
     return false;
 }
 
 // typeBase: TYPE_INT | TYPE_DOUBLE | TYPE_CHAR | STRUCT ID
 bool typeBase(){
+    Token *start = iTk;
 	if(consume(TYPE_INT)){
 		return true;
 	}
@@ -110,11 +113,13 @@ bool typeBase(){
             tkerr("expected struct name");
         }
 	}
+    iTk = start;
 	return false;
 }
 
 // arrayDecl: LBRACKET INT? RBRACKET
 bool arrayDecl(){
+    Token *start = iTk;
     if(consume(LBRACKET)){
         if(consume(INT)){}
         if(consume(RBRACKET))
@@ -122,6 +127,7 @@ bool arrayDecl(){
         else
             tkerr("expected ']' after array declaration or invalid expression in array declaration");
     }
+    iTk = start;
     return false;
 }
 
@@ -141,15 +147,15 @@ bool fnDef(){
                     if(stmCompound())
                         return true;
                     else
-                        tkerr("expected compound statement after function declaration or invalid expression in function definition");
+                        tkerr("expected '{' at the beginning of function body or invalid expression in function definition");
                 }
                 else
                     tkerr("expected ')' after function parameters or invalid expression in function definition");
             }
-        }else{
+        }/*else{
             if(consume(LPAR))
                 tkerr("missing function identifier");
-        }
+        }*/
     }
     iTk = startTk; 
     return false;
@@ -157,6 +163,7 @@ bool fnDef(){
 
 // fnParam: typeBase ID arrayDecl?
 bool fnParam(){
+    Token *start = iTk;
     if(typeBase()){
         if(consume(ID)){
             if(arrayDecl()){}
@@ -164,11 +171,13 @@ bool fnParam(){
         }else
             tkerr("expected parameter name");
     }
+    iTk = start;
     return false;
 }
 
 // stm: stmCompound | IF LPAR expr RPAR stm (ELSE stm)? | WHILE LPAR expr RPAR stm | RETURN expr? SEMICOLON | expr? SEMICOLON
 bool stm(){
+    Token *start = iTk;
     if(stmCompound()){
         return true;
     }
@@ -234,11 +243,13 @@ bool stm(){
     if(consume(SEMICOLON)){
         return true; // empty statement
     }
+    iTk = start;
     return false;
 }
 
 // stmCompound: LACC (varDef | stm)* RACC
 bool stmCompound(){
+    Token *start = iTk;
     if(consume(LACC)){
         for(;;){
             if(varDef()){}
@@ -251,6 +262,7 @@ bool stmCompound(){
             tkerr("expected '}' after compound statement or invalid expression in compound statement");
         }
     }
+    iTk = start;
     return false;
 }
 
@@ -264,35 +276,39 @@ bool expr(){
 
 // exprAssign: exprUnary ASSIGN exprAssign | exprOr
 bool exprAssign(){
-    Token *startTk = iTk;
+    Token *start = iTk;
     if(exprUnary()){
         if(consume(ASSIGN)){
             if(exprAssign()){
                 return true;
             }else{
-                tkerr("invalid or missing expression after '= '");
+                tkerr("invalid or missing expression after '='");
             }
         }
-        iTk = startTk;
+        iTk = start;
     }
     if(exprOr()){
         return true;
     }
+    iTk = start;
     return false;
 }
 
 // exprOr: exprOr OR exprAnd | exprAnd   =>  exprOr: exprAnd exprOrPrim 
 bool exprOr(){
+    Token *start = iTk;
     if(exprAnd()){
         if(exprOrPrim()){
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
 // exprOrPrim: OR exprAnd exprOrPrim | ε
 bool exprOrPrim(){
+    Token *start = iTk;
     if(consume(OR)){
         if(exprAnd()){
             if(exprOrPrim()){
@@ -304,21 +320,25 @@ bool exprOrPrim(){
             tkerr("invalid or missing expression after '||'");
         }
     }
+    iTk = start;
     return true;
 }
 
 // exprAnd: exprAnd AND exprEq | exprEq  =>  exprAnd: exprEq exprAndPrim
 bool exprAnd(){
+    Token *start = iTk;
     if(exprEq()){
         if(exprAndPrim()){
             return true;
         }
     }
+    iTk = start;   
     return false;
 }
 
 // exprAndPrim: AND exprEq exprAndPrim | ε
 bool exprAndPrim(){
+    Token *start = iTk;
     if(consume(AND)){
         if(exprEq()){
             if(exprAndPrim()){
@@ -330,21 +350,25 @@ bool exprAndPrim(){
             tkerr("invalid or missing expression after '&&'");
         }
     }
+    iTk = start;
     return true;
 }
 
 // exprEq: exprEq (EQUAL | NOTEQ) exprRel | exprRel  =>  exprEq: exprRel exprEqPrim
 bool exprEq(){
+    Token *start = iTk;
     if(exprRel()){
         if(exprEqPrim()){
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
 // exprEqPrim: (EQUAL | NOTEQ) exprRel exprEqPrim | ε
 bool exprEqPrim(){
+    Token *start = iTk;
     if(consume(EQUAL) || consume(NOTEQ)){
         if(exprRel()){
             if(exprEqPrim()){
@@ -356,21 +380,25 @@ bool exprEqPrim(){
             tkerr("invalid or missing expression after '==' or '!='");
         }
     }
+    iTk = start;
     return true;
 }
 
 // exprRel: exprRel (LESS | LESSEQ | GREATER | GREATEREQ) exprAdd | exprAdd  =>  exprRel: exprAdd exprRelPrim
 bool exprRel(){
+    Token *start = iTk;
     if(exprAdd()){
         if(exprRelPrim()){
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
 // exprRelPrim: (LESS | LESSEQ | GREATER | GREATEREQ) exprAdd exprRelPrim | ε
 bool exprRelPrim(){
+    Token *start = iTk;
     if(consume(LESS) || consume(LESSEQ) || consume(GREATER) || consume(GREATEREQ)){
         if(exprAdd()){
             if(exprRelPrim()){
@@ -382,21 +410,25 @@ bool exprRelPrim(){
             tkerr("invalid or missing expression after relational operator");
         }
     }
+    iTk = start;
     return true;
 }
 
 // exprAdd: exprAdd (ADD | SUB) exprMul | exprMul  =>  exprAdd: exprMul exprAddPrim
 bool exprAdd(){
+    Token *start = iTk;
     if(exprMul()){
         if(exprAddPrim()){
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
 // exprAddPrim: (ADD | SUB) exprMul exprAddPrim | ε
 bool exprAddPrim(){
+    //Token *start = iTk;
     if(consume(ADD) || consume(SUB)){
         if(exprMul()){
             if(exprAddPrim()){
@@ -408,6 +440,7 @@ bool exprAddPrim(){
             tkerr("invalid or missing expression after '+' or '-'");
         }
     }
+    //iTk = start;
     return true;
 }
 
@@ -439,6 +472,7 @@ bool exprMulPrim(){
 
 // exprCast: LPAR typeBase arrayDecl? RPAR exprCast | exprUnary
 bool exprCast(){
+    Token *start = iTk;
     if(consume(LPAR)){
         if(typeBase()){
             if(arrayDecl()){}
@@ -451,45 +485,53 @@ bool exprCast(){
             }else{
                 tkerr("expected ')' after cast type or invalid expression in cast");
             }
-        }else{
-            tkerr("expected type in cast");
         }
-    }else{
-        if(exprUnary()){
-            return true;
-        }
+        // Daca LPAR a fost gasit dar n-am dat de un tip (typeBase e false),
+        // ignoram si lasam sa se intoarca la start pentru a incerca exprUnary.
     }
+    
+    iTk = start;
+    if(exprUnary()){
+        return true;
+    }
+    
+    iTk = start;
     return false;
 }
 
 // exprUnary: (SUB | NOT) exprUnary | exprPostfix
 bool exprUnary(){
+    Token *start = iTk;
     if(consume(SUB) || consume(NOT)){
         if(exprUnary()){
             return true;
         }else{
             tkerr("invalid or missing expression after unary operator");
         }
-    }else{
+    }iTk = start;
         if(exprPostfix()){
             return true;
         }
-    }
+    
+    iTk = start;
     return false;
 }
 
 // exprPostfix: exprPostfix LBRACKET expr RBRACKET | exprPostfix DOT ID | exprPrimary   =>  exprPostfix: exprPrimary exprPostfixPrim
 bool exprPostfix(){
+    Token *start = iTk;
     if(exprPrimary()){
         if(exprPostfixPrim()){
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
 // exprPostfixPrim: LBRACKET expr RBRACKET exprPostfixPrim | DOT ID exprPostfixPrim | ε
 bool exprPostfixPrim(){
+    Token *start = iTk;
     if(consume(LBRACKET)){
         if(expr()){
             if(consume(RBRACKET)){
@@ -504,7 +546,8 @@ bool exprPostfixPrim(){
         }else{
             tkerr("invalid or missing expression after '[' in array access");
         }
-    }else if(consume(DOT)){
+    }iTk = start;
+    if(consume(DOT)){
         if(consume(ID)){
             if(exprPostfixPrim()){
                 return true;
@@ -515,11 +558,13 @@ bool exprPostfixPrim(){
             tkerr("expected member name after '.' in member access");
         }
     }
+    iTk = start;
     return true;
 }
 
 // exprPrimary: ID (LPAR (expr (COMMA expr)*)? RPAR)? | INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
 bool exprPrimary(){
+    Token *start = iTk;
     if(consume(ID)){
         if(consume(LPAR)){
             if(expr()){
@@ -550,6 +595,7 @@ bool exprPrimary(){
             tkerr("invalid or missing expression after '('");
         }
     }
+    iTk = start;
     return false;
 }
 
@@ -557,5 +603,5 @@ bool exprPrimary(){
 void parse(Token *tokens){    
 	iTk=tokens;
 	if(!unit())
-        tkerr("syntax error");
+        tkerr("syntax error: unexpected token at global scope. Expected 'struct', a type or 'void'");
 }
