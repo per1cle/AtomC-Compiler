@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include "lexer.h"
+#include "ad.h"
 
 const char *tkCodeName(int code);
 void tkerr(const char *fmt,...);
@@ -11,12 +12,12 @@ void parse(Token *tokens);
 bool unit();
 bool structDef();
 bool varDef();
-bool typeBase();
-bool arrayDecl();
+bool typeBase(Type *t);
+bool arrayDecl(Type *t);
 bool fnDef();
 bool fnParam();
 bool stm();
-bool stmCompound();
+bool stmCompound(bool newDomain);
 bool expr();
 bool exprAssign();
 bool exprOr();
