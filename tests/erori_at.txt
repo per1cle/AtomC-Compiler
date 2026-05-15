@@ -1,0 +1,120 @@
+// IF - conditia trebuie sa fie scalar
+int vect[10];
+if(v);
+
+// WHILE - conditia trebuie sa fie scalar
+while(v);
+
+// RETURN - expresia trebuie sa fie scalar
+return v;
+
+// RETURN - functiile void nu pot returna o valoare
+void f(){
+    return 2;
+}
+
+// RETURN - functiile non-void trebuie sa aiba o expresie returnata --> 
+int f(){
+    return
+}
+    --> a carei tip sa fie convertibil la tipul returnat de functie
+Struct s a;
+int f(){
+    return a;
+}
+
+//Destinatia trebuie sa fie left-value
+10 = x;
+
+//Destinatia nu trebuie sa fie constanta
+const int x = 10;
+x = 2;
+
+//Destinatia trebuie sa fie scalar
+int v[10];
+int x;
+v = x;
+
+//Sursa trebuie sa fie scalar
+int v[10];
+int x;
+x = v;
+
+//Sursa trebuie sa fie convertibila la destinatie
+struct S a;
+int x;
+x = a;
+
+//Tip operand invalid ||
+Struct s a;
+if(a || 3){}
+
+//Tip operand invalid &&
+if(a && 2){}   /   if(v && 1){}
+
+//Tip operand invalid ==
+//Tip operand invalid !=
+//Tip operand invalid <
+//Tip operand invalid <=
+//Tip operand invalid >
+//Tip operand invalid >=
+//Tip operand invalid *
+//Tip operand invalid / 
+
+//Tipul la care se converteste nu poate fi structura
+(struct S)b;
+
+//Structurile nu se pot converti
+struct S a;
+(int) a;
+
+//Un array se poate converti doar la alt array
+int b[10];
+(int)b;
+
+//Un scalar se poate converti doar la alt scalar
+int c;
+(int[10])c;
+
+//Minus unar trebuie sa aiba operand scalar
+int b[10];
+if(-b){}
+
+//Not trebuie sa aiba operand scalar
+int b[10];
+if(!b){}
+
+//Doar un array poate fi indexat
+char x;
+x[1] = 1;
+
+//Indexul unui array trebuie sa fie convertibil la int
+int b[10];
+struct S s;
+b[s];
+
+//Operatorul de selectie a unui camp de structura se poate aplica doar structurilor
+int x;
+x.n;
+
+//Campul unei structuri trebuie sa existe
+struct S s;
+s.a = 1;
+
+//ID-ul trebuie sa existe in TS
+m=0;
+
+//Doar functiile pot fi apelate
+int m;
+m(2);
+
+//Apelul unei functii trebuie sa aiba acelasi numar de argumente ca si numarul de parametri de la definitia ei
+h(1,2,3);
+h(1);
+
+//Tipurile argumentelor de la apelul unei functii trebuie sa fie convertibile la tipurile parametrilor functiei
+int b[10];
+h(1,b);
+
+//O functie poate fi doar apelata
+h + 2

@@ -9,7 +9,7 @@
 #include "ad.h"
 
 int main(){
-    char *inBuffer = loadFile("tests/testad.c");
+    char *inBuffer = loadFile("tests/testat.c");
 
     Token *tokens = tokenize(inBuffer);
     free(inBuffer);
@@ -18,6 +18,9 @@ int main(){
     printf("\n\n");
     pushDomain(); 
     parse(tokens);
+    printf("\n\n");
+    showDomain(symTable,"global"); 
+    dropDomain();
 
     free(tokens);
     return 0;
