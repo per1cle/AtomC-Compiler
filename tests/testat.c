@@ -16,9 +16,11 @@ int h(int x,int y){
 		return 1;
 		}
 	return 0;
-	}
+}
 
 int main(){
-	
+	int x[10];
+	int y[10];
+	x[1] = y[1];
 }
 

@@ -11,7 +11,7 @@ struct S1{
 struct S1 p1;
 struct S1 vp[10];
 
-double sum(double x[5],int n){
+double sum(double x[5],int n, int m[1]){
 	double r;
 	int i;
 	r=0;
@@ -26,5 +26,5 @@ double sum(double x[5],int n){
 	}
 	
 void f(struct S1 p){
-	puti(p.i);
+	//puti(p.i);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "vm.h"
+#include "vm.h"
 
 // the domain analysis
 
@@ -53,7 +53,7 @@ struct Symbol{
 			Symbol *params;		// the parameters of a function
 			Symbol *locals;		// all local vars of a function, including the ones from its inner domains
 			void(*extFnPtr)();		// !=NULL for extern functions
-			//Instr *instr;		// used if extFnPtr==NULL
+			Instr *instr;		// used if extFnPtr==NULL
 			}fn;
 		};
 	};

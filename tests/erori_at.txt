@@ -24,11 +24,14 @@ int f(){
 }
 
 //Destinatia trebuie sa fie left-value
+int x;
 10 = x;
 
 //Destinatia nu trebuie sa fie constanta
-const int x = 10;
-x = 2;
+int z[10];
+int t[10];
+z = t;
+
 
 //Destinatia trebuie sa fie scalar
 int v[10];
@@ -62,6 +65,7 @@ if(a && 2){}   /   if(v && 1){}
 //Tip operand invalid / 
 
 //Tipul la care se converteste nu poate fi structura
+int b;
 (struct S)b;
 
 //Structurile nu se pot converti
