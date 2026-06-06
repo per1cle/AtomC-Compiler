@@ -139,7 +139,7 @@ void run(Instr *IP){
 				IP=IP->next;
 				break;
 			case OP_PUSH_F:
-				printf("PUSH.f\t%g",IP->arg.f);
+				printf("PUSH.f\t%.1f",IP->arg.f);
 				pushf(IP->arg.f);
 				IP=IP->next;
 				break;

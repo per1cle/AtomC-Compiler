@@ -1,0 +1,95 @@
+OP_CALL main
+OP_HALT
+
+fact:
+    OP_ENTER 0              // Creează frame-ul (0 variabile locale)  n[-2] ret[-1] oldFP[0]
+    
+    // if(n < 3)
+    FPADDR_I -2          // Adresa parametrului 'n' (FP[-2])
+    LOAD_I               // Pune pe stivă valoarea lui 'n'
+    PUSH_I 3             // Pune constanta 3 pe stivă
+    LESS_I               // Compară (n < 3) -> pune 1 (true) sau 0 (false) pe stivă
+    JF fact_recursiv     // Dacă e fals (n >= 3), sare la partea recursivă
+
+    // return n;
+    FPADDR_I -2          // Adresa lui 'n'
+    LOAD_I               // Încarcă valoarea lui 'n'
+    RET 1                // Returnează valoarea de pe stivă și curăță 1 parametru ('n')
+
+fact_recursiv:
+    // return n * fact(n-1);
+    FPADDR_I -2          // Adresa lui 'n'
+    LOAD_I               // Pune 'n' pe stivă 
+
+    FPADDR_I -2          // Adresa lui 'n'
+    LOAD_I               // Pune 'n' pe stivă
+    PUSH_I 1             // Pune constanta 1 pe stivă
+    SUB_I                // Scade: n - 1
+    CALL fact            // Apel recursiv: fact(n-1). Rezultatul va fi pus pe stivă
+
+    MUL_I                // Înmulțește 'n' cu rezultatul apelului fact(n-1)
+    RET 1                // Returnează rezultatul și curăță parametrul 'n'
+
+
+main:
+    OP_ENTER 2              // Creează frame-ul (2 variabile locale: ret[-1] oldFP[0] r[1] i[2])
+
+    // put_i(4.9);
+    PUSH_F 4.9           // Pune constanta 4.9 (double)
+    CONV_F_I             // Convertește în int (4.9 -> 4)
+    CALL_EXT put_i       // Apel funcție ext (afișează 4)
+
+    // put_i(fact(3));
+    PUSH_I 3             // Pune constanta 3 (parametrul pentru fact)
+    CALL fact            // Apelează fact(3). Rezultatul (6) rămâne pe stivă
+    CALL_EXT put_i       // Apel funcție ext (afișează 6)
+
+    // int r; r = 1;
+    FPADDR_I 1           // Adresa lui 'r' 
+    PUSH_I 1             // Valoarea 1
+    STORE_I              // Pune valoarea la adresă. Lasă valoarea (1) pe stivă
+    DROP                 // Aruncă valoarea lăsată de STORE
+
+    // int i; i = 2;
+    FPADDR_I 2           // Adresa lui 'i'
+    PUSH_I 2             // Valoarea 2
+    STORE_I              // Pune valoarea la adresă
+    DROP                 // Aruncă valoarea
+
+while_cond:
+    // while(i < 5)
+    FPADDR_I 2           // Adresa lui 'i'
+    LOAD_I               // Încarcă 'i'
+    PUSH_I 5             // Constanta 5
+    LESS_I               // Compară (i < 5)
+    JF while_end         // Dacă e fals, sari afară din buclă
+
+    // r = r * i;
+    FPADDR_I 1           // Adresa lui 'r' (destinația)
+    FPADDR_I 1           // Adresa lui 'r'
+    LOAD_I               // Încarcă 'r'
+    FPADDR_I 2           // Adresa lui 'i'
+    LOAD_I               // Încarcă 'i'
+    MUL_I                // r * i
+    STORE_I              // r = r * i
+    DROP                 // Aruncă valoarea de pe stivă
+
+    // i = i + 1;
+    FPADDR_I 2           // Adresa lui 'i' (destinația)
+    FPADDR_I 2           // Adresa lui 'i'
+    LOAD_I               // Încarcă 'i'
+    PUSH_I 1             // Constanta 1
+    ADD_I                // i + 1
+    STORE_I              // i = i + 1
+    DROP                 // Aruncă valoarea de pe stivă
+
+    JMP while_cond       // Sari înapoi la evaluarea condiției while
+
+while_end:
+    // put_i(r);
+    FPADDR_I 1           // Adresa lui 'r'
+    LOAD_I               // Încarcă 'r' pe stivă
+    CALL_EXT put_i       // Afișează 24
+
+    // Finalizare funcție
+    RET_VOID 0           // Return din main (funcție void, 0 parametri)
